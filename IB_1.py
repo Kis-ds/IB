@@ -47,8 +47,8 @@ def get_info(bgn_de, end_de) :
                     rcept_info.append(c.rcept_no.get_text()+'_'+c.corp_code.get_text()+'_'+c.corp_name.get_text()+'_정정')
                 else : 
                     rcept_info.append(c.rcept_no.get_text()+'_'+c.corp_code.get_text()+'_'+c.corp_name.get_text()+'_최초')
-    print('보고서 수: ', len(rcept_info))  
-    st.write('보고서 수: ', len(rcept_info)) 
+    print('보고서 수 : ', len(rcept_info))  
+    st.write('보고서 수 : ', len(rcept_info)) 
     return(rcept_info)
 
 ### STEP2. STEP1에서 가져온 정정신고서의 최초신고서 가져오기
