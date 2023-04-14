@@ -1,0 +1,11 @@
+requests
+zipfile
+pandas
+BeautifulSoup
+BytesIO
+pickle
+json
+re
+streamlit
+datetime
+openpyxl 
