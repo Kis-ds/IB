@@ -89,7 +89,6 @@ def get_corp_docu(rcept_no):
        
     try:
         zf = zipfile.ZipFile(BytesIO(response.content))
-        fp = zf.read('{}.xml'.format(rcept_no))
         z_list = zf.namelist()
         file = zf.read(z_list[0]) 
         
