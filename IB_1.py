@@ -75,7 +75,7 @@ def get_rcept_no(info) :
                   , 'last_reprt_at':'N'} # 최종보고서 검색여부
         response = requests.get(url, params=params, verify=False)
         soup = BeautifulSoup(response.content, features='xml')
-        rcept_names = ['증권신고서(채무증권)','[첨부추가]증권신고서(채무증권)']
+        rcept_names = ['증권신고서(채무증권)','[첨부추가]증권신고서(채무증권)','[첨부정정]증권신고서(채무증권)']
         for c in soup.find_all('list'):
             if c.report_nm.get_text() in rcept_names: 
                 rcept_all.append(c.rcept_no.get_text())
