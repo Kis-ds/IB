@@ -239,6 +239,3 @@ if st.button("조회"):
         with open('회사채 발행_'+bgn_de+'_'+end_de+'.xlsx', 'rb') as f:
                 data = f.read()
                 st.download_button(label='다운', data=data, file_name='회사채 발행_'+bgn_de+'_'+end_de+'.xlsx', mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    start_date = st.date_input('시작일', value=date.today(), max_value = date.today())
-    max_date = min(start_date+timedelta(days=7), date.today())
-    end_date = st.date_input('종료일', value=start_date, min_value = start_date, max_value = max_date)
