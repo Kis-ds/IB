@@ -132,8 +132,7 @@ def get_corp_docu(rcept_no):
                    '상환기일':exp_dt,'납입기일':pym_prd,'수량':face_tot,'대표':acc_nmt1, '대표수량':acc_cnt1,'인수':acc_nmt2,'인수수량':acc_cnt2}
             rows.append(row)    
     except Exception as e:
-        print(rcept_no+'_Error!_'+str(e))  
-        st.write('<p style="font-size:14px; color:red">'+'- 문서 '+rcept_no+'에서 오류 발생! 데이터솔루션부에 문의하세요.</p>',unsafe_allow_html=True)  
+        print(rcept_no+'_Error!_'+str(e))   
     return(rows)
 
 ### STEP4. 원하는 형식으로 정리하기
