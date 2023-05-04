@@ -95,9 +95,7 @@ def get_corp_docu(rcept_no):
                 '만기이자율(%)':lst_rtn_rt, '사채만기일':exp_dt, '전환청구시작일':sb_bgn_dt, '최저조정가액':min_prc, '전환가액':exe_prc ,
                 '제출대상여부':rpt_sm_yn, '발행대상자명':issu_nm}
     except Exception as e:
-        print(rcept_no+'_Error!_'+str(e))  
-        st.write('<p style="font-size:14px; color:red">'+'- 문서 '+rcept_no+'에서 오류 발생! 데이터솔루션부에 문의하세요.</p>',unsafe_allow_html=True)  
-        
+        print(rcept_no+'_Error!_'+str(e))        
     return row
 
 ### STEP3. 원하는 형식으로 정리하기
