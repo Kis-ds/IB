@@ -111,7 +111,7 @@ def get_report(info):
             company_type = '유가증권' if info[i][-1]=='Y' else ('코스닥' if info[i][-1]=='K' else ('코넥스' if info[i][-1]=='N' else '기타법인' ))  
             type1 = '공모' if data['제출대상여부'] =='예' else '사모'
             type2 = '영구' if round((datetime.strptime(data['사채만기일'],'%Y%m%d')-datetime.strptime(data['납입일'],'%Y%m%d')).days/365,1)>=30 else ''
-            type3 = 'CB' if data['구분'] == '전환사채권' else ('BW' if data['구분'] == '신주인수권' else 'EB')
+            type3 = 'CB' if data['구분'] == '전환사채권' else ('BW' if data['구분'] == '신주인수권부사채권' else 'EB')
             dnm_sum = int(data['전자등록총액'].replace('\n','').replace(',',''))/1000000
             prft_rate = '-' if data['표면이자율(%)'] == '-' else float(data['표면이자율(%)'])/100
             lst_rtn_rt = '-' if data['만기이자율(%)'] == '-' else float(data['만기이자율(%)'])/100
