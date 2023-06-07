@@ -343,7 +343,7 @@ def get_report(info):
                 rows2.append(row) 
             except Exception as e:
                     print(info[i]+'_Error!_'+str(e))
-                    st.write('<p style="font-size:14px; color:red">'+'- 문서 '+info[i][:14]+'에서 오류 발생! 데이터솔루션부에 문의하세요.
+                    st.write('<p style="font-size:14px; color:red">'+'- 문서 '+info[i][:14]+'에서 오류 발생! 데이터솔루션부에 문의하세요.</p>',unsafe_allow_html=True)
         else:
             row = {'비고':info[i][-2:], '보고서주소':rcept_no, '법인명':corp_nm, '시장구분':mkt_type, 
                    '일반배정주식수':'', '일반청약주식수':'', '일반경쟁률':'', '공모배정주식수':'', '공모배정금액':'', '공모배정율':'',
