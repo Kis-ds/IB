@@ -21,6 +21,7 @@ from openpyxl.styles import Alignment, PatternFill, colors, Color, Font
 
 warnings.filterwarnings(action='ignore')
 API_KEY = '9ed5bc3d6d1fee4f927c5d6a44eb5368d222824c'
+dart = OpenDartReader(API_KEY)
 
 ### STEP1. 증권신고서(지분증권)및 증권발행실적보고서 정보 가져오기
 def get_rcept_no(bgn_de, end_de) :
