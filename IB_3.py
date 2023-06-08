@@ -392,7 +392,6 @@ if st.button("조회"):
     ws.freeze_panes = "D2"
 
     wb.save('유상증자결과_'+bgn_de+'_'+end_de+'.xlsx')
-    st.dataframe(result1)
     with open('유상증자결과_'+bgn_de+'_'+end_de+'.xlsx', 'rb') as f:
             data = f.read()
             st.download_button(label='다운', data=data, file_name='유상증자결과_'+bgn_de+'_'+end_de+'.xlsx', mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
