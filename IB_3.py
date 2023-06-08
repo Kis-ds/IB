@@ -33,7 +33,7 @@ def get_rcept_no(bgn_de, end_de) :
     rcept_info = list(info_df['rcept_no']+'_'+info_df['corp_cls']+info_df['구분']+'_'+info_df['corp_name']+'_'+info_df['비고'])
 
     print('보고서수 : ', len(rcept_info))
-    st.write('보고서 수 : ', len(rcept_info))
+    st.write('보고서 수(신규상장 및 이전상장 제외 전) : ', len(rcept_info))
     return(rcept_info)
 
 ### STEP2. 테이블에서 값 가져오기
@@ -216,14 +216,14 @@ def to_per(var):
     return value
 def to_per_gwalho(var):
     if var == '추출불가':
-        value = '추출불가'
+        value = 0
     elif '(' in str(var):
         var = re.findall(r'\((.*?)\)', var)[0]
         value = float(re.sub(r'[^0-9.]', '', var))/100
     elif var == '-':
         value = 0
     else :
-        value = '확인필요'             
+        value = 0         
     return value
 def to_short(var):
     replace_dict = {
