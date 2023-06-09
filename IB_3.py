@@ -381,15 +381,13 @@ def load_lottie():
     with open('./resources/report.json', 'r', encoding='utf-8-sig') as st_json:
         return json.load(st_json)
 
-empty1, col1, col2 = st.columns([0.1, 0.5, 0.8])
+empty1, col1, col2 = st.columns([0.1, 0.3, 0.8])
 with empty1:
     st.empty()
 with col1:
     lottie = load_lottie()
     st_lottie(lottie, speed=1, loop=True, width=150, height=150, )
 with col2:
-    ''
-    ''
     ''
     ''
     st.title('유상증자 집계현황')
