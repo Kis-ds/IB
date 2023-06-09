@@ -376,15 +376,21 @@ def get_report(info):
     return(result1, result2)
 
 ### STEP5. 웹페이지 레이아웃 및 엑셀 형식 설정하기
-# 보고서 제목
-st.title('유상증자 집계현황')
-
-# 애니메이션 삽입
+# 애니메이션 및 보고서 제목 삽입
 def load_lottie():
     with open('./resources/report.json', 'r', encoding='utf-8-sig') as st_json:
         return json.load(st_json)
-lottie = load_lottie()
-st_lottie(lottie, speed=1, loop=True, width=250, height=250, )
+
+empty1, col1, col2 = st.columns([0.3, 0.5, 1])
+with empty1:
+    st.empty()
+with col1:
+    lottie = load_lottie()
+    st_lottie(lottie, speed=1, loop=True, width=250, height=250, )
+with col2:
+    ''
+    ''
+    st.title('유상증자 집계현황')
 
 # 날짜 선택
 start_date = st.date_input('시작일', value=date.today(), max_value = date.today())
