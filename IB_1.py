@@ -14,6 +14,7 @@ from datetime import datetime, timedelta, date
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Alignment, PatternFill, colors, Color, Font
+from streamlit_lottie import st_lottie
 
 warnings.filterwarnings(action='ignore')
 API_KEY = '9ed5bc3d6d1fee4f927c5d6a44eb5368d222824c'
@@ -198,8 +199,21 @@ def get_report(info):
     return(result)
 
 ### STEP5. 웹페이지 레이아웃 및 엑셀 형식 설정하기
-# 보고서 제목
-st.title('공모회사채 발행시장 현황')
+# 애니메이션 및 보고서 제목 삽입
+def load_lottie():
+    with open('./resources/report.json', 'r', encoding='utf-8-sig') as st_json:
+        return json.load(st_json)
+
+empty1, col1, col2 = st.columns([0.05, 0.3, 0.8])
+with empty1:
+    st.empty()
+with col1:
+    lottie = load_lottie()
+    st_lottie(lottie, speed=1, loop=True, width=150, height=150, )
+with col2:
+    ''
+    ''
+    st.title('공모회사채 발행시장 현황')
 
 # 날짜 선택
 start_date = st.date_input('시작일', value=date.today(), max_value = date.today())
