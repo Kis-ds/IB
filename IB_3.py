@@ -8,14 +8,14 @@ import re
 import math
 import pickle
 import warnings
-import streamlit as st
 import OpenDartReader
-from datetime import datetime, timedelta, date
+import time
 
 from bs4 import BeautifulSoup
 from io import BytesIO
 from datetime import datetime, timedelta
 from openpyxl import Workbook
+from openpyxl.styles import PatternFill
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Alignment, PatternFill, colors, Color, Font
 
@@ -37,7 +37,7 @@ def get_rcept_no(bgn_de, end_de) :
     return(rcept_info)
 
 ### STEP2. 테이블에서 값 가져오기
-def get_table(xml_text, title):
+def get_table(xml_text, title, gubun):
     try:
         # 표 제목을 가진 테이블 찾기(포함 유무로 판단, 빈칸 고려)
         table_src = re.findall('{}.*?</TABLE-GROUP>'.format(title), xml_text, re.DOTALL)[0].replace('TE', 'TD').replace('TU', 'TD')
@@ -47,6 +47,16 @@ def get_table(xml_text, title):
         # 표에 칼럼명이 숫자로 임의로 지정되었을 때 첫번째 행의 값을 칼럼명으로 지정하기
         if all(isinstance(col, int) for col in df.columns):
             df.columns = df.iloc[0]
+            
+        # 정정인 경우 정정 후 테이블 찾기
+        if gubun == '정정':
+            num = min(10, len(table))
+            for i in range(2,num):
+                if len(table[i].columns) == len(df.columns):
+                    if all(isinstance(col, int) for col in table[i].columns):
+                        table[i].columns = table[i].iloc[0]
+                    if all(table[i].columns == df.columns) == True:
+                        df = table[i]        
         return df
     except Exception:
         return pd.DataFrame()
@@ -110,20 +120,21 @@ def get_singo_balh(rcept_no):
     except :
         return '확인필요'
 
-def get_singo(rcept_no):
-    xml_text = dart.document(rcept_no)
+def get_singo(info):
+    xml_text = dart.document(info[:14])
     xml_text = xml_text.replace("\n", "")
+    gubun = info[-2:]
     rows = [] 
     
     if get_value_from_id(xml_text,'ACC_ES', 'PSSRP_KND3') not in ['신규상장','이전상장']:    
         try:
-            iljeong_old = get_table(xml_text, '공모일정 등에 관한 사항') # 1.공모개요
-            iljeong_remove = iljeong_old[~iljeong_old.iloc[:,1].str.contains('공고|폐지')]
+            iljeong_old = get_table(xml_text, '공모일정 등에 관한 사항', gubun) # 1.공모개요
+            iljeong_remove = iljeong_old[~iljeong_old.iloc[:,1].str.contains('공고|폐지|무상증자')]
             iljeong = iljeong_remove.iloc[::-1].reset_index()
             iljeong = iljeong.iloc[:,1:]
-            sanchul = get_table(xml_text,'배정비율 산출') # 2.공모방법
-            sanjeong = get_table(xml_text,'산정표') # 1.공모개요
-            gongmo = get_table(xml_text,'공모방법') # 2.공모방법
+            sanchul = get_table(xml_text,'배정비율 산출', gubun) # 2.공모방법
+            sanjeong = get_table(xml_text,'산정표', gubun) # 1.공모개요
+            gongmo = get_table(xml_text,'공모방법', gubun) # 2.공모방법
 
             jeungja_mth = get_value_from_id(xml_text,'PBO', 'PB_MTH') 
             isa_dt = get_value_from_table(iljeong,'이사회결의',0) if not iljeong.empty else '테이블X'
@@ -152,17 +163,18 @@ def get_singo(rcept_no):
                    '대표유무':daepyo_yn, '인수방식':insu_mth, '인수단':insu_nm, '특이조건':condition}
             rows.append(row)
         except Exception as e:
-            print(rcept_no+'_Error!_'+str(e)) 
+            print(info[:14]+'_Error!_'+str(e)) 
     return rows
 
-def get_silj(rcept_no):
-    xml_text = dart.document(rcept_no)
+def get_silj(info):
+    xml_text = dart.document(info[:14])
     xml_text = xml_text.replace("\n", "")
+    gubun = info[-2:]
     rows = [] 
     
     try:
-        hyeonh = get_table(xml_text,'청약 및 배정현황')
-        insu = get_table(xml_text,'인수기관별 인수금액')
+        hyeonh = get_table(xml_text,'청약 및 배정현황', gubun)
+        insu = get_table(xml_text,'인수기관별 인수금액', gubun)
         baej_cnt = get_value_from_table(hyeonh,'일반',('최종배정현황','수량'))
         cheongy_cnt= get_value_from_table(hyeonh,'일반',('청약현황','수량'))
         gongm_cnt = get_value_from_table(hyeonh,'계',('최종배정현황','수량'))
@@ -182,7 +194,7 @@ def get_silj(rcept_no):
                '최종발행주식수':final_cnt, '최종발행금액':final_price}
         rows.append(row)
     except Exception as e:
-        print(rcept_no+'_Error!_'+str(e))       
+        print(info[:14]+'_Error!_'+str(e))       
     return rows
 
 ### STEP4. 값을 원하는 형식으로 처리하기
@@ -200,7 +212,8 @@ def to_date(var):
     return value
 def to_int(var):
     gwalho = re.sub(r'\([^)]*\)', '', str(var))
-    numbers = re.sub(r'\D', '', gwalho)
+    sosu = gwalho.split(".")[0]
+    numbers = re.sub(r'\D', '', sosu)
     if len(numbers) == 0:
         value = 0
     else:
@@ -216,14 +229,14 @@ def to_per(var):
     return value
 def to_per_gwalho(var):
     if var == '추출불가':
-        value = 0
+        value = '추출불가'
     elif '(' in str(var):
         var = re.findall(r'\((.*?)\)', var)[0]
         value = float(re.sub(r'[^0-9.]', '', var))/100
     elif var == '-':
         value = 0
     else :
-        value = 0         
+        value = '확인필요'           
     return value
 def to_short(var):
     replace_dict = {
@@ -249,8 +262,8 @@ def get_report(info):
         rcept_no = 'https://dart.fss.or.kr/dsaf001/main.do?rcpNo='+info[i][:14]
         if info[i][16:17]=='1':    
             try:
-                if info[i][-2:] in ['최초','정정'] and get_singo(info[i][:14]) != []:
-                    data = get_singo(info[i][:14])[0]
+                if info[i][-2:] in ['최초','정정'] and get_singo(info[i]) != []:
+                    data = get_singo(info[i])[0]
                     jeungja_mth = data['증자방법']
                     isa_dt = to_date(data['이사회결의일'])
                     baej_dt = to_date(data['신주배정기준일'])
@@ -266,7 +279,7 @@ def get_report(info):
                         exp_all_price = to_int(data['예정발행금액'])
                         discnt_per = to_per(data['할인율'])
                         jeungja_per = exp_cnt/done_cnt if done_cnt!=0 else '확인필요'
-                        uli_saju_per = to_per_gwalho(data['우리사주'])
+                        uli_saju_per = 0 if to_per_gwalho(data['우리사주'])=='추출불가' else to_per_gwalho(data['우리사주'])
                         insu_mth = '모집주선' if data['대표유무']=='주선' else (data['인수방식'][0] if type(data['인수방식'])==list else data['인수방식'])
                         sangj_yn = '비상장' if sinju_sangj_dt == '' else '상장'
 
@@ -296,8 +309,7 @@ def get_report(info):
                                    '정액수수료':'', '기본수수료율':'', '추가수수료율':'','특이조건':condition, '인수모집비율':'', 
                                    '인수모집금액':'', '수수료금액':'', '1차발행가':'', '2차발행가':'', 
                                    '확정발행가':'','발행가증감율':'', '신주인수권상장여부':sangj_yn}
-                            rows1.append(row)
-                            st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
+                            rows1.append(row) 
                     elif info[i][-2:] == '정정':
                         row = {'비고':info[i][-2:], '보고서주소':rcept_no, '법인명':corp_nm, '시장구분':mkt_type, '증자방법':jeungja_mth, 
                                '이사회결의일':isa_dt, '신주배정기준일':baej_dt, '신주인수권상장일':sinju_sangj_dt, 
@@ -307,7 +319,6 @@ def get_report(info):
                                '추가수수료율':'', '특이조건':'', '인수모집비율':'', '인수모집금액':'', '수수료금액':'', 
                                '1차발행가':'', '2차발행가':'', '확정발행가':'','발행가증감율':'', '신주인수권상장여부':''}
                         rows1.append(row) 
-                        st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
                 elif info[i][-2:] == '발행':
                     row = {'비고':info[i][-2:]+'('+get_singo_balh(info[i][:14])+')', '보고서주소':rcept_no, '법인명':corp_nm, 
                            '시장구분':mkt_type, '증자방법':'', '이사회결의일':'', '신주배정기준일':'', '신주인수권상장일':'', 
@@ -317,12 +328,11 @@ def get_report(info):
                            '특이조건':'', '인수모집비율':'', '인수모집금액':'', '수수료금액':'', 
                            '1차발행가':'', '2차발행가':'', '확정발행가':'','발행가증감율':'', '신주인수권상장여부':''}
                     rows1.append(row) 
-                    st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
             except Exception as e:
                     print(info[i]+'_Error!_'+str(e))
         elif info[i][16:17]=='2' and info[i][-2:]=='최초': 
             try:
-                data = get_silj(info[i][:14])[0]
+                data = get_silj(info[i])[0]
                 baej_cnt = to_int(data['일반배정주식수'])
                 cheongy_cnt = to_int(data['일반청약주식수'])
                 competi_per = cheongy_cnt/baej_cnt if baej_cnt!=0 else 0
@@ -336,22 +346,19 @@ def get_report(info):
                 jugwansa_price = to_int(data['주관사인수금액'])
                 final_cnt = to_int(data['최종발행주식수'])
                 final_price = to_int(data['최종발행금액'])
-                gongm_per = gongm_cnt/final_cnt if final_cnt!=0 else '확인필요'
                 jugwansa_per = jugwansa_cnt/final_cnt if final_cnt!=0 else '확인필요'
 
                 row = {'비고':'', '보고서주소':rcept_no, '법인명':corp_nm, '시장구분':mkt_type,                              
                        '일반배정주식수':baej_cnt, '일반청약주식수':cheongy_cnt, '일반경쟁률':competi_per, 
-                       '공모배정주식수':gongm_cnt, '공모배정금액':gongm_price, '공모배정율':gongm_per,
+                       '공모배정주식수':gongm_cnt, '공모배정금액':gongm_price, '공모배정율':'',
                        '3자배정청약주식수':third_cnt, '3자배정청약금액':third_price, '3자배정배정율':third_per,
                        '주관사인수주식수':jugwansa_cnt, '주관사인수금액':jugwansa_price, '주관사인수율':jugwansa_per,
                        '최종발행주식수':final_cnt, '최종발행금액':final_price}
-                rows2.append(row)
-                st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
+                rows2.append(row) 
             except Exception as e:
                     print(info[i]+'_Error!_'+str(e))
-                    st.write('<p style="font-size:14px; color:red">'+'- 문서 '+info[i][:14]+'에서 오류 발생! 데이터솔루션부에 문의하세요.</p>',unsafe_allow_html=True)
         else:
-            row = {'비고':'', '보고서주소':rcept_no, '법인명':corp_nm, '시장구분':mkt_type, 
+            row = {'비고':info[i][-2:], '보고서주소':rcept_no, '법인명':corp_nm, '시장구분':mkt_type, 
                    '일반배정주식수':'', '일반청약주식수':'', '일반경쟁률':'', '공모배정주식수':'', '공모배정금액':'', '공모배정율':'',
                    '3자배정청약주식수':'', '3자배정청약금액':'', '3자배정배정율':'',
                    '주관사인수주식수':'', '주관사인수금액':'', '주관사인수율':'','최종발행주식수':'', '최종발행금액':''} 
@@ -389,6 +396,8 @@ if st.button("조회"):
             cell.font = Font(size=9)
             if column_cells[0].column_letter == 'B' and cell.row not in  [1, len(result1)+2, len(result1)+3] :
                 cell.value = '=HYPERLINK("{}", "{}")'.format(cell.value,'링크')
+            if cell.row == len(result1)+2:
+                cell.fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
     ws.freeze_panes = "D2"
 
     wb.save('유상증자결과_'+bgn_de+'_'+end_de+'.xlsx')
