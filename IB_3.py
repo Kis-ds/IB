@@ -311,6 +311,7 @@ def get_report(info):
                                    '인수모집금액':'', '수수료금액':'', '1차발행가':'', '2차발행가':'', 
                                    '확정발행가':'','발행가증감율':'', '신주인수권상장여부':sangj_yn}
                             rows1.append(row) 
+                            st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
                     elif info[i][-2:] == '정정':
                         row = {'비고':info[i][-2:], '보고서주소':rcept_no, '법인명':corp_nm, '시장구분':mkt_type, '증자방법':jeungja_mth, 
                                '이사회결의일':isa_dt, '신주배정기준일':baej_dt, '신주인수권상장일':sinju_sangj_dt, 
@@ -320,6 +321,7 @@ def get_report(info):
                                '추가수수료율':'', '특이조건':'', '인수모집비율':'', '인수모집금액':'', '수수료금액':'', 
                                '1차발행가':'', '2차발행가':'', '확정발행가':'','발행가증감율':'', '신주인수권상장여부':''}
                         rows1.append(row) 
+                        st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
                 elif info[i][-2:] == '발행':
                     row = {'비고':info[i][-2:]+'('+get_singo_balh(info[i][:14])+')', '보고서주소':rcept_no, '법인명':corp_nm, 
                            '시장구분':mkt_type, '증자방법':'', '이사회결의일':'', '신주배정기준일':'', '신주인수권상장일':'', 
@@ -329,6 +331,7 @@ def get_report(info):
                            '특이조건':'', '인수모집비율':'', '인수모집금액':'', '수수료금액':'', 
                            '1차발행가':'', '2차발행가':'', '확정발행가':'','발행가증감율':'', '신주인수권상장여부':''}
                     rows1.append(row) 
+                    st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
             except Exception as e:
                     print(info[i]+'_Error!_'+str(e))
         elif info[i][16:17]=='2' and info[i][-2:]=='최초': 
@@ -356,6 +359,7 @@ def get_report(info):
                        '주관사인수주식수':jugwansa_cnt, '주관사인수금액':jugwansa_price, '주관사인수율':jugwansa_per,
                        '최종발행주식수':final_cnt, '최종발행금액':final_price}
                 rows2.append(row) 
+                st.write('<p style="font-size:14px; color:black">'+'- 문서 '+info[i][:14]+' 추출 완료!</p>',unsafe_allow_html=True)
             except Exception as e:
                     print(info[i]+'_Error!_'+str(e))
         else:
