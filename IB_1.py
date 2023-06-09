@@ -213,7 +213,7 @@ with col1:
 with col2:
     ''
     ''
-    st.title('공모회사채 발행시장 현황')
+    st.title('공모회사채 발행현황')
 
 # 날짜 선택
 start_date = st.date_input('시작일', value=date.today(), max_value = date.today())
