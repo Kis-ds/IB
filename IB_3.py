@@ -381,7 +381,7 @@ def load_lottie():
     with open('./resources/report.json', 'r', encoding='utf-8-sig') as st_json:
         return json.load(st_json)
 
-empty1, col1, col2 = st.columns([0, 0.3, 0.8])
+empty1, col1, col2 = st.columns([0.05, 0.3, 0.8])
 with empty1:
     st.empty()
 with col1:
