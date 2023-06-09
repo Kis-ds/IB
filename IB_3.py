@@ -386,7 +386,7 @@ with empty1:
     st.empty()
 with col1:
     lottie = load_lottie()
-    st_lottie(lottie, speed=1, loop=True, width=250, height=250, )
+    st_lottie(lottie, speed=1, loop=True, width=150, height=150, )
 with col2:
     ''
     ''
