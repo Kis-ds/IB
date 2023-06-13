@@ -19,7 +19,8 @@ try:
     ChromeDriverManager().install()
     
     # ChromeDriver 버전 확인
-    version = webdriver.ChromeOptions().version['chrome']
+    options = webdriver.ChromeOptions()
+    version = options.version
     st.write("Chrome 버전:", version)
 except Exception as e:
     st.write("오류 발생:", str(e))
