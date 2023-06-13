@@ -7,5 +7,5 @@ openpyxl==3.0.9
 lxml==4.9.2
 OpenDartReader==0.2.3
 streamlit_lottie==0.0.5
-selenium==4.3.1
-webdriver_manager==3.5.4
+selenium==4.9.1
+webdriver_manager==3.8.6
