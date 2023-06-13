@@ -14,13 +14,18 @@ import time
 #st.write(value)
 # ChromeDriver 종료
 #driver.quit()
-try:
-    # ChromeDriver 설치
-    ChromeDriverManager().install()
-    
-    # ChromeDriver 버전 확인
-    options = webdriver.ChromeOptions()
-    version = options.version
-    st.write("Chrome 버전:", version)
-except Exception as e:
-    st.write("오류 발생:", str(e))
+
+# Chrome 드라이버 설치
+chrome_driver_path = ChromeDriverManager().install()
+
+# Chrome 브라우저 버전 가져오기
+options = webdriver.ChromeOptions()
+options.add_argument("--headless")  # 브라우저 창을 열지 않고 실행하려면 추가
+driver = webdriver.Chrome(chrome_driver_path, options=options)
+
+# Chrome 버전 가져오기
+chrome_version = driver.capabilities["browserVersion"]
+st.write("Chrome 버전:", chrome_version)
+
+# 드라이버 종료
+driver.quit()
