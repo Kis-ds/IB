@@ -19,7 +19,7 @@ try:
     driver_service = Service(chrome_driver_path)
     driver_service.start()
 
-    with webdriver.Chrome(service=driver_service, options=chrome_options) as driver:
+    with webdriver.Chrome(executable_path="/home/appuser/.wdm/drivers/chromedriver/linux64/114.0.5735.90/chromedriver", service=driver_service, options=chrome_options) as driver:
         # Streamlit 앱 구성
         st.title("Streamlit with Selenium")
 
