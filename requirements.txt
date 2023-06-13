@@ -7,3 +7,4 @@ openpyxl==3.0.9
 lxml==4.9.2
 OpenDartReader==0.2.3
 streamlit_lottie==0.0.5
+selenium==4.9.1
