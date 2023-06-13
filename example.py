@@ -20,7 +20,7 @@ search_query = st.text_input("Enter a search query")
 # 검색 버튼 클릭 시
 if st.button("Search"):
     # Selenium으로 검색 결과 가져오기
-    with webdriver.Chrome(chrome_driver, options=chrome_options) as driver:
+    with webdriver.Chrome(executable_path="/path/to/chromedriver", options=chrome_options) as driver:
         driver.get("https://www.google.com/search?q=" + search_query)
         title = driver.title
 
