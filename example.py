@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
 chrome_options = Options()
-chrome_options.add_argument("--headless") # 브라우저 창을 띄우지 않고 실행할 경우
+chrome_options.add_argument("--headless")  # 브라우저 창을 띄우지 않고 실행할 경우
 
 try:
     # ChromeDriver 설치 경로 확인
@@ -19,7 +19,7 @@ try:
     driver_service = Service(chrome_driver_path)
     driver_service.start()
 
-    with webdriver.Chrome(executable_path="/home/appuser/.wdm/drivers/chromedriver/linux64/114.0.5735.90/chromedriver", service=driver_service, options=chrome_options) as driver:
+    with webdriver.Chrome(executable_path=chrome_driver_path, service=driver_service, options=chrome_options) as driver:
         # Streamlit 앱 구성
         st.title("Streamlit with Selenium")
 
