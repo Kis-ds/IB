@@ -1,18 +1,17 @@
-import re
-import subprocess
 import streamlit as st
-import winreg
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+import time
 
-def get_chrome_version():
-    try:
-        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Google\Chrome\BLBeacon")
-        value, _ = winreg.QueryValueEx(key, "version")
-        return value
-    except FileNotFoundError:
-        return None
+# ChromeDriverManager로 특정 버전의 ChromeDriver 설치
+driver = webdriver.Chrome(ChromeDriverManager(version="114.0.5735.110").install())
+#driver = webdriver.Chrome(ChromeDriverManager().install())
 
-chrome_version = get_chrome_version()
-if chrome_version:
-    st.write(f"Chrome 버전: {chrome_version}")
-else:
-    st.write("Chrome 버전을 확인할 수 없습니다.")
+# 네이버 화면 이동
+driver.get('https://www.naver.com')
+time.sleep(5)
+value = driver.find_element(By.XPATH,'//*[@id="newsstand"]/div[2]/a').text
+st.write(value)
+# ChromeDriver 종료
+driver.quit()
