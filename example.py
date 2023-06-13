@@ -7,8 +7,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 st.set_page_config(page_title="Selenium with Streamlit")
 
 # Chrome 드라이버 설치
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # 브라우저 창을 열지 않고 실행하려면 추가
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--headless")  # 브라우저 창을 열지 않고 실행하려면 추가할 수 있습니다.
 chrome_driver = ChromeDriverManager().install()
 
 # Streamlit 앱 내에서 Selenium 사용
