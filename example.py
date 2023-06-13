@@ -1,26 +1,26 @@
 import streamlit as st
-import sys
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+import subprocess
+from bs4 import BeautifulSoup
+import requests
 
-# ChromeDriver Manager를 사용하여 ChromeDriver 설치 및 경로 가져오기
-chrome_driver_path = ChromeDriverManager().install()
+# ChromeDriver 실행 파일 경로
+chromedriver_path = "/home/appuser/.wdm/drivers/chromedriver/linux64/114.0.5735.90/chromedriver"
 
-# Chrome 옵션 설정
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # 브라우저 창을 띄우지 않고 실행할 경우
+# 실행 권한 추가
+subprocess.run(["chmod", "+x", chromedriver_path], check=True)
 
-# ChromeDriver 실행
-try:
-    with webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options) as driver:
-        # Streamlit 앱 구성
-        st.title("Streamlit with Selenium")
+# Streamlit 앱 시작
+st.title("Streamlit with Selenium")
 
-        # 크롤링 작업 등 수행
-        driver.get("https://www.example.com")
-        st.write(driver.title)
-except Exception as e:
-    st.error(f"Failed to start ChromeDriver: {e}")
-    sys.exit(1)
+# 웹 크롤링 작업
+url = "https://www.example.com"  # 크롤링할 웹 페이지의 URL
+command = [chromedriver_path]
+process = subprocess.Popen(command, stdout=subprocess.PIPE)
+output = process.communicate()[0]
+
+# 웹 페이지 파싱
+soup = BeautifulSoup(output, "html.parser")
+title = soup.title.string
+
+# 추출한 제목 출력
+st.write("Web Page Title:", title)
