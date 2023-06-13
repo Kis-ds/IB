@@ -1,17 +1,11 @@
+import re
+import subprocess
 import streamlit as st
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
-import time
-
-driver = webdriver.Chrome(ChromeDriverManager().install())
-
-# 네이버 화면 이동
-driver.get('https://www.naver.com')
-time.sleep(5)
-value = driver.find_element(By.XPATH,'//*[@id="newsstand"]/div[2]/a').text
-st.write(value)
-# ChromeDriver 종료
-driver.quit()
-
-
+# 레지스트리를 통해 크롬 설치 경로 확인
+command = 'reg query "HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon" /v version'
+try:
+    output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True).decode()
+    version = re.search(r"version\s*REG_SZ\s*(.*)", output).group(1)
+    st.write(f"Chrome 버전: {version}")
+except subprocess.CalledProcessError as e:
+    st.write("Chrome 버전을 확인할 수 없습니다.")
