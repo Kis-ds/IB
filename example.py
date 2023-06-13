@@ -1,30 +1,32 @@
 import streamlit as st
-from selenium.webdriver.chrome.service import Service
+import subprocess
+import sys
+from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
-import subprocess
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+# ChromeDriver 경로 확인
+command = "which chromedriver"
+process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+output, _ = process.communicate()
+chromedriver_path = output.decode().strip()
 
 # Chrome 옵션 설정
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # 브라우저 창을 열지 않고 실행하기 위해 headless 모드 설정
-
-# ChromeDriver 실행 명령
-command = "chromedriver"
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--headless")  # 브라우저 창을 띄우지 않고 실행할 경우
 
 # ChromeDriver 실행
-process = subprocess.Popen(command, stdout=subprocess.PIPE)
+try:
+    driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
+except Exception as e:
+    st.error(f"Failed to start ChromeDriver: {e}")
+    sys.exit(1)
 
-# ChromeDriver가 실행될 때까지 잠시 대기
-process.stdout.readline()
+# Streamlit 앱 구성
+st.title("Streamlit with Selenium")
 
-# ChromeDriver와 연결
-driver = webdriver.Chrome(options=chrome_options)
-
-# 웹 자동화 코드 작성
-# ...
+# 크롤링 작업 등 수행
+driver.get("https://www.example.com")
+st.write(driver.title)
 
 # ChromeDriver 종료
 driver.quit()
-process.terminate()
