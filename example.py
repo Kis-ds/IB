@@ -1,29 +1,23 @@
 import streamlit as st
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
+# ChromeDriver 경로 설정
+chrome_driver_path = ChromeDriverManager().install()
 
+# ChromeDriver 서비스 생성
+service = Service(chrome_driver_path)
 
-# Chrome 드라이버 설치
-#chrome_options = webdriver.ChromeOptions()
-#chrome_options.add_argument("--headless")  # 브라우저 창을 열지 않고 실행하려면 추가할 수 있습니다.
-#chrome_driver = ChromeDriverManager().install()
+# Chrome 옵션 설정
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--headless")  # 브라우저 창을 열지 않고 실행하기 위해 headless 모드 설정
 
-# Streamlit 앱 내에서 Selenium 사용
-st.title("Selenium with Streamlit")
+# ChromeDriver 실행
+with webdriver.Chrome(service=service, options=chrome_options) as driver:
+    # 웹 자동화 코드 작성
+    # ...
+    pass  # 필요한 동작 수행
 
-# 검색어 입력
-search_query = st.text_input("Enter a search query")
-
-# 검색 버튼 클릭 시
-if st.button("Search"):
-    # Selenium으로 검색 결과 가져오기
-    service = Service(executable_path=ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
-    driver.get("https://www.google.com/search?q=" + search_query)
-    title = driver.title
-
-    # 검색 결과 타이틀 출력
-    st.write("Search Result Title:", title)
+# ChromeDriver 종료
+service.stop()
