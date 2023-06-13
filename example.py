@@ -2,34 +2,6 @@ import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-import subprocess
-
-
-# Bash 명령어 실행 함수
-def run_bash_command(command):
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-    output, error = process.communicate()
-    return output
-
-# Streamlit 앱 예시
-def main():
-    st.title("Bash Command Execution")
-    
-    # Bash 명령어 입력 받기
-    command = st.text_input("chmod +x /path/to/chromedriver")
-    
-    if st.button("Execute"):
-        # Bash 명령어 실행
-        result = run_bash_command(command)
-        
-        # 결과 출력
-        st.code(result.decode("utf-8"))
-
-if __name__ == "__main__":
-    main()
-    
-# Streamlit 앱 설정
-st.set_page_config(page_title="Selenium with Streamlit")
 
 # Chrome 드라이버 설치
 chrome_options = webdriver.ChromeOptions()
