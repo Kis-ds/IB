@@ -15,6 +15,7 @@ from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Alignment, PatternFill, colors, Color, Font
 from streamlit_lottie import st_lottie
+from time import sleep
 
 warnings.filterwarnings(action='ignore')
 API_KEY = '9ed5bc3d6d1fee4f927c5d6a44eb5368d222824c'
